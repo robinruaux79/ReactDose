@@ -10,7 +10,7 @@ Un composant pour générer des traductions à la volée.
 <Translate id="Home" lang="fr">Default value</Translate>
 ```
 
-You must rap ```<Translate />``` components with the ```<Globalization></Globalization>``` high-order component.
+You must wrap ```<Translate />``` components with the ```<Globalization></Globalization>``` high-order component.
 
 ### Title
 Un composant pour vos titres HTML.
