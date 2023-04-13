@@ -1,0 +1,74 @@
+body {
+    font-size: 100%;
+    height: 100%;
+}
+
+html {
+    height: 100%;
+}
+
+[contenteditable="true"] {
+    outline: 1px dashed red;
+    cursor: text;
+}
+
+article .tags a {
+    display: inline-block;
+    padding: 0 2px;
+}
+
+ul.horizontal,
+ol.horizontal {
+    padding: 0;
+    margin: 0;
+}
+
+ul.horizontal > li,
+ol.horizontal > li {
+    display: inline-block;
+    padding: 2px 5px;
+}
+
+ul.vertical > li,
+ol.vertical > li {
+    display: list-item;
+}
+
+.field input:not([type=checkbox],[type=radio],[type=number]), .field textarea {
+    width: 100%;
+}
+
+.field input {
+    display: flex;
+}
+
+.help {
+    cursor: help;
+}
+.field {
+    margin-bottom: 1em;
+    display: flex;
+}
+.field label {
+    display: flex;
+    font-weight: bold;
+    margin-right: 2%;
+    min-width: fit-content;
+    align-items: center;
+}
+.field-checkbox label {
+    padding-left: 2%;
+    margin-right: 0
+}
+.field-multiline label {
+    align-items: flex-start;
+}
+.field .error {
+    display: block;
+}
+
+.mandatory {
+    color: red;
+    padding: 2px;
+    display: inline-block;
+}
