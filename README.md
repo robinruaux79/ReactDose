@@ -1,20 +1,22 @@
 # ReactDose
 Une bibliothèque de composants React pour vos interfaces web
 
-## Documentation
+## Internationalisation
 
-### Translate
+## Translate
 Un composant pour générer des traductions à la volée.
-
-```
-import {Globalization, Translate} from './Globalization.jsx';
-
 ```
 <Globalization>
     <Translate id="Home" lang="fr">Default value</Translate>
 </Globalization>
 ```
 
+## Composants React
+Composants atomiques censés être utiles, performants et accessibles pour le plus grand nombre.
+
+```
+import { Title, TextField, EmailField, NumberField, RadioField, RadioGroup } from './Field.jsx';
+```
 
 ### Title
 Un composant pour vos titres HTML.
