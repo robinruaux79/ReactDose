@@ -282,7 +282,7 @@ const RadioGroup = forwardRef(({id, label, help, editable, name, required, child
     {[recursiveMap(children, (child, index) => {
         if( child.type.displayName == 'RadioField'){
             const props = {...child.props, name: (name ?  name : child.props.name), onChange:() => handleChange(child.props.onChange)};
-            return <child.type {...props} ref={registerRef('Radio'+index)} />;
+            return <child.type {...props} ref={registerRef('Radio'+index)} name={child.props.name || 'btn'+id} />;
         }
         return child;
     }),

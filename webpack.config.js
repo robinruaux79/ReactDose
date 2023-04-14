@@ -1,6 +1,6 @@
 // config/webpack.config.js
 const path = require('path');
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 /**
  * process.cwd() will return a path to our active project directory
  * For example, on windows will look like:
@@ -34,8 +34,7 @@ module.exports = {
    */
   output: {
     path: path.resolve(ROOT_DIRECTORY, 'public'),
-    filename: '[name].bundle.js',
-    chunkFilename: '[name].chunk.js',
+    filename: 'bundle.js',
   },
   /**
    * This devServer option is our development server that get picked up by webpack-dev-server
@@ -43,7 +42,7 @@ module.exports = {
    */
   devServer: {
     // Serves everything from our build folder which is our output folder
-    static: path.resolve(ROOT_DIRECTORY, 'build'),
+    static: path.resolve(ROOT_DIRECTORY, 'public'),
     // Enable gzip compression
     compress: true,
     // Which port we want to use, in this case, we use port 3000
@@ -54,6 +53,7 @@ module.exports = {
    * In this example, we're using cheap-module-eval-source-map (recommend by webpack)
    * Docs: https://webpack.js.org/configuration/devtool/
    */
+  plugins: [],
   devtool: 'cheap-module-source-map',
   module: {
     rules: [

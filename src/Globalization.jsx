@@ -1,4 +1,4 @@
-import { useContext, createContext } from "react";
+import React, { useContext, createContext } from "react";
 
 const getNavigatorLanguage = () => {
   if (navigator.languages && navigator.languages.length) {
@@ -27,7 +27,7 @@ export const Globalization = ({children}) => {
 
 export const Translate = ({id, children}) => {
     const ctx = useContext(GlobalizationContext);
-    const messages = ctx.messages[ctx.locale];
+    const messages = ctx?.messages[ctx.locale];
     return messages[id] || children;
 }
 
