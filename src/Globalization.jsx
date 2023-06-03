@@ -17,7 +17,7 @@ const i18nContextValue = {
         }
     }
 };
-const GlobalizationContext = createContext({i18nContextValue});
+const GlobalizationContext = createContext(i18nContextValue);
 export const Globalization = ({children}) => {
     return (
         <GlobalizationContext.Provider value={i18nContextValue}>
@@ -27,8 +27,15 @@ export const Globalization = ({children}) => {
 
 export const Translate = ({id, children}) => {
     const ctx = useContext(GlobalizationContext);
+    console.log("ok", ctx);
     const messages = ctx?.messages[ctx.locale];
     return messages[id] || children;
 }
 
+export const useTranslate = (id, defaultValue)=>{
+    const ctx = useContext(GlobalizationContext);
+    console.log(ctx);
+    const messages = ctx?.messages[ctx.locale];
+    return messages[id] || defaultValue || '';
+}
 export default Globalization;

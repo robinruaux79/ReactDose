@@ -105,7 +105,7 @@ export const Hyperlink = ({ children, target, editable, onClick }) => {
             e.preventDefault();
             return;
         }
-        if( href[0] == '/' || href[0] == '?' ){
+        if( href[0] === '/' || href[0] === '?' ){
             window.history.pushState({}, e.target.innerText, href);
             e.preventDefault();
         }
@@ -115,7 +115,10 @@ export const Hyperlink = ({ children, target, editable, onClick }) => {
 
 export const Menu = ({children, ordered, breadcrumb, navigation, editable, orientation}) => {
     const mOrientation = orientation || 'vertical';
-    const className = cn({ 'vertical': mOrientation == 'vertical', 'horizontal' : mOrientation == 'horizontal'});
+    const className = cn({
+        'grid': mOrientation === 'grid',
+        'vertical': mOrientation === 'vertical',
+        'horizontal' : mOrientation === 'horizontal' });
     const content = ( ordered ? <ol className={className} contentEditable={editable}>{children}</ol> : <ul className={className} contentEditable={editable}>{children}</ul>);
     if( navigation ){
         return <nav role="navigation">{content}</nav>;

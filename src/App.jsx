@@ -1,24 +1,34 @@
-import React from 'react';
+import React, {useContext, useRef} from 'react';
 
-import { Globalization, Translate } from './Globalization.jsx';
+import { HTMLEditor } from './Editor.jsx';
+
+import {IconContext, ThemeContext} from './Theme.jsx';
+import {Globalization, Translate, useTranslate} from './Globalization.jsx';
 import { Form, TextField, EmailField, NumberField, RadioGroup, RadioField, CheckboxField } from './Field.jsx';
+import {Button, Item, Menu, Title} from "./Tags.jsx";
 
+import './App.css';
+
+/**
+ * ICI !
+ *
+ * Affiche des événements à proximité
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const App = () => {
+
+  const refQueryEvents = useRef(null);
+
+  const queryEvents = () => {
+    console.log(refQueryEvents);
+    console.log("query events" + refQueryEvents.current.getValue());
+  };
   return (<>
     <Globalization>
-      <Translate id="TEST" />
+      <Title>ICI !</Title>
+      <HTMLEditor />
     </Globalization>
-
-    <Form>
-      <TextField />
-      <EmailField />
-      <NumberField />
-      <RadioGroup>
-        <RadioField />
-        <RadioField />
-      </RadioGroup>
-      <CheckboxField />
-    </Form>
   </>)
 }
 

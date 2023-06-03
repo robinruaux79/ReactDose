@@ -10,11 +10,12 @@ import { Translate } from "./Globalization.jsx";
 export const Form = ({ name, onValidate, onError, children, editable }) => {
     const [childrenRef, registerRef] = useRefs();
     const onSubmit = (e) => {
+        e.preventDefault();
         let res = true;
         Object.keys(childrenRef.current).forEach((item) => {
             console.log(item,res)
             res = childrenRef.current[item].validate() && res;
-            });
+        });
         if( res ){
             if (onValidate)
                 onValidate();
@@ -22,11 +23,11 @@ export const Form = ({ name, onValidate, onError, children, editable }) => {
             if( onError )
                 onError();
         }
-        e.preventDefault();
     }
 
     /**/
-    return <form name={name} noValidate={true} contentEditable={editable} className={cn({['form-'+name]: true})} onSubmit={onSubmit}>{recursiveMap(children, (child, index) => {
+    return <form name={name} noValidate={true} contentEditable={editable} className={cn({['form-'+name]: true})} onSubmit={onSubmit}>
+        {recursiveMap(children, (child, index) => {
         if( child?.type?.displayName?.match(/(Field|RadioGroup)/)){
             return <child.type {...child.props} ref={registerRef(child?.type?.displayName.concat('-').concat(child.props.name || uniqid()))} />
         }
@@ -40,7 +41,7 @@ const TextField = forwardRef(function TextField({ name, label, placeholder, help
     const [value, setValue] = useState(defaultValue || null);
     const validate = () => {
         const errs = [];
-        if( required && (!value || value.trim() == '')){
+        if( required && (!value || value.trim() === '')){
             errs.push('Field required');
         }
         if( minlength && (typeof value == 'string' && value.trim().length < minlength) ){
@@ -70,7 +71,7 @@ const TextField = forwardRef(function TextField({ name, label, placeholder, help
         <label contentEditable={editable} className={cn({'help': !!help})} title={help} htmlFor={id}>{label}{required ? <span className="mandatory" contentEditable={false}>*</span> : ''}</label>
 
         {multiline && <textarea aria-required={required} aria-readonly={readOnly} readOnly={readOnly} placeholder={placeholder} id={id} name={name} value={value || ''} rows={8} onChange={handleChange} minLength={minlength} maxLength={maxlength}></textarea> }
-        {!multiline && <input aria-required={required} aria-readonly={readOnly} readOnly={readOnly} type="text" placeholder={placeholder} id={id} name={name} value={value || ''} onChange={handleChange} minLength={minlength} maxLength={maxlength} />}
+        {!multiline && <input ref={ref} aria-required={required} aria-readonly={readOnly} readOnly={readOnly} type="text" placeholder={placeholder} id={id} name={name} value={value || ''} onChange={handleChange} minLength={minlength} maxLength={maxlength} />}
     </div>
         <ul className="error">
             {errors.map((e,key) => (<li key={key} aria-live="assertive" role="alert"><Translate>{e}</Translate></li>))}
@@ -137,7 +138,7 @@ const NumberField = forwardRef(({ name, label, placeholder, help, editable, defa
     const [value, setValue] = useState(defaultValue || null);
     const validate = () => {
         const errs = [];
-        if( required && (!value || value.trim() == '')){
+        if( required && (!value || value.trim() === '')){
             errs.push('Field required');
         }
         if( minlength && (value && value.trim().length < minlength) ){
@@ -280,7 +281,7 @@ const RadioGroup = forwardRef(({id, label, help, editable, name, required, child
     }
     return <><label contentEditable={editable} className={cn({'help': !!help})} title={help} htmlFor={children[0].props.id}>{label}{required ? <span className="mandatory" contentEditable={false}>*</span> : ''}</label>
     {[recursiveMap(children, (child, index) => {
-        if( child.type.displayName == 'RadioField'){
+        if( child.type.displayName === 'RadioField'){
             const props = {...child.props, name: (name ?  name : child.props.name), onChange:() => handleChange(child.props.onChange)};
             return <child.type {...props} ref={registerRef('Radio'+index)} name={child.props.name || 'btn'+id} />;
         }
