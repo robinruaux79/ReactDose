@@ -36,7 +36,7 @@ export const Form = ({ name, onValidate, onError, children, editable }) => {
 }
 
 const TextField = forwardRef(function TextField({ name, label, placeholder, help, editable, defaultValue, required, readOnly, onChange, multiline, minlength, maxlength }, ref) {
-    const id = 'textfield-'+'_'+uniqid();
+    const id = 'textfield-'+uniqid();
     const [errors, setErrors] = useState([]);
     const [value, setValue] = useState(defaultValue || null);
     const validate = () => {
@@ -83,12 +83,12 @@ TextField.displayName = 'TextField';
 export { TextField };
 
 const EmailField = forwardRef(({ name, label, placeholder, help, editable, defaultValue, required, readOnly, onChange, minlength, maxlength, fieldValidated }, ref) => {
-    const id = 'emailfield-'+'_'+uniqid();
+    const id = 'emailfield-'+uniqid();
     const [errors, setErrors] = useState([]);
     const [value, setValue] = useState(defaultValue || null);
     const validate = () => {
         const errs = [];
-        if( required && (!value || value.trim() == '')){
+        if( required && (!value || value.trim() === '')){
             errs.push('Field required');
         }
         if( minlength && (value && value.trim().length < minlength) ){
@@ -133,7 +133,7 @@ EmailField.displayName = 'EmailField';
 export { EmailField };
 
 const NumberField = forwardRef(({ name, label, placeholder, help, editable, defaultValue, required, readOnly, onChange, minlength, maxlength, min, max, step }, ref) => {
-    const id = 'numberfield-'+'_'+uniqid();
+    const id = 'numberfield-'+uniqid();
     const [errors, setErrors] = useState([]);
     const [value, setValue] = useState(defaultValue || null);
     const validate = () => {
@@ -182,7 +182,7 @@ NumberField.displayName = 'NumberField';
 export { NumberField };
 
 const CheckboxField = forwardRef(({ name, label, placeholder, help, editable, defaultValue, required, readOnly, onChange, minlength, maxlength, checked }, ref) => {
-    const id = 'checkfield-'+'_'+uniqid();
+    const id = 'checkfield-'+uniqid();
     const [errors, setErrors] = useState([]);
     const [value, setValue] = useState(defaultValue || null);
     const validate = () => {
@@ -220,7 +220,7 @@ export { CheckboxField };
 
 
 const RadioField = forwardRef(({ name, label, placeholder, help, editable, checked, required, readOnly, onChange, minlength, maxlength }, ref) => {
-    const id = 'radiofield-'+'_'+uniqid();
+    const id = 'radiofield-'+uniqid();
     const [errors, setErrors] = useState([]);
     const [value, setValue] = useState(checked || null);
     const validate = () => {

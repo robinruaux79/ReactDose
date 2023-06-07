@@ -18,12 +18,6 @@ import './App.css';
  */
 const App = () => {
 
-  const refQueryEvents = useRef(null);
-
-  const queryEvents = () => {
-    console.log(refQueryEvents);
-    console.log("query events" + refQueryEvents.current.getValue());
-  };
   return (<>
     <Globalization>
       <Title>ICI !</Title>
