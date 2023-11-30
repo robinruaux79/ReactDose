@@ -18,7 +18,7 @@ export const Form = ({ name, onValidate, onError, children, editable }) => {
         });
         if( res ){
             if (onValidate)
-                onValidate();
+                onValidate(e);
         }else{
             if( onError )
                 onError();
@@ -28,9 +28,9 @@ export const Form = ({ name, onValidate, onError, children, editable }) => {
     /**/
     return <form name={name} noValidate={true} contentEditable={editable} className={cn({['form-'+name]: true})} onSubmit={onSubmit}>
         {recursiveMap(children, (child, index) => {
-        if( child?.type?.displayName?.match(/(Field|RadioGroup)/)){
+        /*if( child?.type?.displayName?.match(/(Field|RadioGroup)/)){
             return <child.type {...child.props} ref={registerRef(child?.type?.displayName.concat('-').concat(child.props.name || uniqid()))} />
-        }
+        }*/
         return child;
     })}</form>
 }
@@ -39,6 +39,7 @@ const TextField = forwardRef(function TextField({ name, label, placeholder, help
     const id = 'textfield-'+uniqid();
     const [errors, setErrors] = useState([]);
     const [value, setValue] = useState(defaultValue || null);
+    const inputRef = useRef();
     const validate = () => {
         const errs = [];
         if( required && (!value || value.trim() === '')){
@@ -54,6 +55,7 @@ const TextField = forwardRef(function TextField({ name, label, placeholder, help
         return !errs.length;
     }
     useImperativeHandle(ref, () => ({
+        ref: inputRef.current,
         validate,
         getValue : () => value
     }));
@@ -70,8 +72,8 @@ const TextField = forwardRef(function TextField({ name, label, placeholder, help
     return (<><div className={cn({field: true, 'field-text': !multiline, 'field-multiline': multiline})}>
         <label contentEditable={editable} className={cn({'help': !!help})} title={help} htmlFor={id}>{label}{required ? <span className="mandatory" contentEditable={false}>*</span> : ''}</label>
 
-        {multiline && <textarea aria-required={required} aria-readonly={readOnly} readOnly={readOnly} placeholder={placeholder} id={id} name={name} value={value || ''} rows={8} onChange={handleChange} minLength={minlength} maxLength={maxlength}></textarea> }
-        {!multiline && <input ref={ref} aria-required={required} aria-readonly={readOnly} readOnly={readOnly} type="text" placeholder={placeholder} id={id} name={name} value={value || ''} onChange={handleChange} minLength={minlength} maxLength={maxlength} />}
+        {multiline && <textarea ref={inputRef} aria-required={required} aria-readonly={readOnly} readOnly={readOnly} placeholder={placeholder} id={id} name={name} value={value || ''} rows={8} onChange={handleChange} minLength={minlength} maxLength={maxlength}></textarea> }
+        {!multiline && <input ref={inputRef} aria-required={required} aria-readonly={readOnly} readOnly={readOnly} type="text" placeholder={placeholder} id={id} name={name} value={value || ''} onChange={handleChange} minLength={minlength} maxLength={maxlength} />}
     </div>
         <ul className="error">
             {errors.map((e,key) => (<li key={key} aria-live="assertive" role="alert"><Translate>{e}</Translate></li>))}

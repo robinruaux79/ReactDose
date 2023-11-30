@@ -79,3 +79,19 @@ ol.vertical > li {
     padding: 2px;
     display: inline-block;
 }
+
+.workspace {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+.workspace-content {
+    align-self: flex-start;
+}
+
+.workspace-btns {
+    display: flex;
+    flex-direction: column;
+    width: 20px;
+    text-align: center;
+}

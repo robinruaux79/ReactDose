@@ -92,7 +92,7 @@ export const Button = ({ onClick, children, link, editable, name }) => {
     return <button contentEditable={editable} name={name} onClick={gotoLink}>{children}</button>
 }
 
-export const Hyperlink = ({ children, target, editable, onClick }) => {
+export const Hyperlink = ({ children, target, editable, onClick, ...otherProps }) => {
     const mTarget = target || '#';
     const handleClick = (e) => {
         const href = e.target.getAttribute('href');
@@ -110,20 +110,19 @@ export const Hyperlink = ({ children, target, editable, onClick }) => {
             e.preventDefault();
         }
     };
-    return <a contentEditable={editable} onClick={handleClick} href={mTarget}>{children}</a>
+    return <a contentEditable={editable} onClick={handleClick} href={mTarget} {...otherProps}>{children}</a>
 }
 
-export const Menu = ({children, ordered, breadcrumb, navigation, editable, orientation}) => {
+export const Menu = ({id, children, ordered, breadcrumb, navigation, editable, orientation, ...otherProps}) => {
     const mOrientation = orientation || 'vertical';
     const className = cn({
         'grid': mOrientation === 'grid',
         'vertical': mOrientation === 'vertical',
         'horizontal' : mOrientation === 'horizontal' });
-    const content = ( ordered ? <ol className={className} contentEditable={editable}>{children}</ol> : <ul className={className} contentEditable={editable}>{children}</ul>);
     if( navigation ){
-        return <nav role="navigation">{content}</nav>;
+        return ( ordered ? <ol {...otherProps} className={className} contentEditable={editable}>{children}</ol> : <ul {...otherProps} className={className} contentEditable={editable}>{children}</ul>);
     }
-    return content;
+    return ( ordered ? <ol {...otherProps} id={id} className={className} contentEditable={editable}>{children}</ol> : <ul {...otherProps} id={id} className={className} contentEditable={editable}>{children}</ul>);
 }
 
 export const Page = ({children}) => {

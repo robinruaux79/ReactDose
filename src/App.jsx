@@ -1,11 +1,11 @@
-import React, {useContext, useRef} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 
-import { HTMLEditor } from './Editor.jsx';
+import { SearchBox } from './Widgets.jsx';
 
 import {IconContext, ThemeContext} from './Theme.jsx';
 import {Globalization, Translate, useTranslate} from './Globalization.jsx';
 import { Form, TextField, EmailField, NumberField, RadioGroup, RadioField, CheckboxField } from './Field.jsx';
-import {Button, Item, Menu, Title} from "./Tags.jsx";
+import {Article, Button, Hyperlink, Item, Menu, Title} from "./Tags.jsx";
 
 import './App.css';
 
@@ -21,7 +21,7 @@ const App = () => {
   return (<>
     <Globalization>
       <Title>ICI !</Title>
-      <HTMLEditor />
+      <SearchBox />
     </Globalization>
   </>)
 }

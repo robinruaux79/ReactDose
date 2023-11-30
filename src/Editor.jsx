@@ -1,9 +1,12 @@
-import React, {useContext, useEffect, useRef} from "react";
-import {Hyperlink, Item, Menu} from "./Tags.jsx";
+import React, {useContext, useEffect, useRef, useState} from "react";
+import {Button, Hyperlink, Item, Menu} from "./Tags.jsx";
 import {Icon} from "./Theme.jsx";
+import {Form, TextField} from "./Field.jsx";
+import {Translate} from "./Globalization.jsx";
 
 export const HTMLEditor = (props) => {
 
+    const textFieldRef = useRef(null);
     const workspaces = JSON.parse(localStorage.getItem('workspaces') || '[]');
 
     const newWorkspaceFunc = (e) => {
@@ -43,30 +46,102 @@ export const HTMLEditor = (props) => {
 
     };
 
-    const Workspace = ({index,children,editable}) => {
-        const sectionRef = useRef(null);
+
+    const Workspace = ({index,children,editable,showMenu}) => {
+        const contentRef = useRef(null);
+        const [editMode, setEditMode] = useState(!!editable);
+
+        const editNodeFunc = (e) => {
+            setEditMode(!editMode);
+            e.preventDefault();
+
+            contentRef.current.focus();
+            setCaret(contentRef.current);
+        }
+
+        const setCaret = (e) => {
+            let range = document.createRange()
+            let sel = window.getSelection()
+            range.setStart(e, 1);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
 
         useEffect(() => {
-            if( sectionRef && sectionRef.current ){
-                sectionRef.current.addEventListener('input', () => {
-                    workspaces[index] = sectionRef.current.innerHTML;
+            if( contentRef && contentRef.current ){
+                contentRef.current.addEventListener('input', () => {
+                    workspaces[index] = contentRef.current.innerHTML;
                 });
             }
-        }, [sectionRef.current]);
+        }, [contentRef.current]);
+
+        useEffect(() => {
+            if( editMode ){
+                setCaret(contentRef.current);
+            }
+        }, [editMode])
 
         let content = children;
         if( workspaces[index] ){
             content = <div dangerouslySetInnerHTML={{__html:workspaces[index]}}></div>;
         }
-        return <section ref={sectionRef} key={index} className="workspace" contentEditable={editable}>{content}</section>
+
+        /**
+         * Composant pour rendre les outils du dev,
+         * des listeners de templates
+         * des méthodes JS
+         * des structures loop, if, constructor...
+         * un template HTML emit('onStart'), des événements DOM;
+         * des données function/atomic_js_typesn
+         *
+         *
+         */
+        return <section key={index} className="workspace">
+            <>
+                <div className={"workspace-btns"}>
+                    <Hyperlink className="workspace-edit-btn" onClick={editNodeFunc}><Icon provider={"fa"} name={"edit"} label={"Edit"} /></Hyperlink>
+                    {editMode && (
+                        <Hyperlink className={"workspace-del-btn"} onClick={deleteNodeFunc}><Icon provider={"fa"} name={"trash"} label={"Delete"} /></Hyperlink>
+                    )}
+                </div>
+                <div ref={contentRef} className={"workspace-content"} contentEditable={editMode}>
+                    {content}
+                </div>
+            </>
+        </section>
     };
 
     useEffect(() => {
         window.addEventListener('unload', () => {
-            console.log(workspaces);
             localStorage.setItem('workspaces', JSON.stringify(workspaces));
         });
     }, []);
+
+    const [events, setEvents] = useState({});
+
+    const addEventFunc = (e) => {
+        if( textFieldRef.current ){
+            const input = textFieldRef.current.ref;
+            const data = {
+                name: input.value,
+            };
+            if( !events[input.value] ){
+                setEvents((ls) => {return {...ls, [input.value]:[data]}});
+            }else{
+                const l = events[input.value];
+                l.push(data);
+                setEvents((ls) => {return {...ls, [input.value]:l}});
+            }
+            input.value = '';
+        }
+        e.preventDefault();
+    };
+
+    const attachListener = (e) => {
+
+    };
+
     return <>
         <Menu breadcrumb navigation orientation="horizontal">
             <Item>
@@ -77,17 +152,27 @@ export const HTMLEditor = (props) => {
                 </Menu>
             </Item>
             <Item>
-                <Menu>
-                    <Item><Hyperlink onClick={editHTMLNodeFunc}><Icon provider="fa" name="edit" label="Edit HTML" />Edit HTML</Hyperlink></Item>
-                    <Item><Hyperlink onClick={copyNodeFunc}><Icon provider="fa" name="copy" label="Copy" /> Copy node</Hyperlink></Item>
-                    <Item><Hyperlink onClick={pasteNodeFunc}><Icon provider="fa" name="paste" label="Paste" /> Paste node</Hyperlink></Item>
-                    <Item><Hyperlink onClick={deleteNodeFunc}><Icon provider="fa" name="trash" label="Delete" /> Delete node</Hyperlink></Item>
-                </Menu>
             </Item>
         </Menu>
-        <Workspace editable index={0}>
+        <Workspace index={0}>
             <div>Test</div>
+            <ul>
+                <li>Test sur deux lignes</li>
+                <li>Test sur deux lignes</li>
+            </ul>
         </Workspace>
-        <Workspace index={1} />
+        <Workspace editable index={1}>
+            <div>Ok</div>
+        </Workspace>
+        <Form onValidate={addEventFunc}>
+            <TextField ref={textFieldRef} name={"event"} label={<Translate id={"Events"}>Evénement</Translate>} placeholder={"onStart, onDestroy..."} />
+            <Button name={"eventAdd"}><Translate id={"Add"}>Ajouter</Translate></Button>
+        </Form>
+        {Object.keys(events).map((l,i) => {
+            const listeners = events[l];
+            return listeners.map((listener, j) => {
+                return <Button name={"eventListener"+i} onClick={(e) => attachListener(i, j)}>{listener.name}</Button>;
+            });
+        })}
     </>
 };
