@@ -80,9 +80,9 @@ const TextField = forwardRef(function TextField({
     }, [value]);
     return (<>
         <div className={cn({field: true, 'field-text': !multiline, 'field-multiline': multiline})}>
-            <label contentEditable={editable} className={cn({'help': !!help})} title={help}
-                   htmlFor={id}>{label}{required ?
-                <span className="mandatory" contentEditable={false}>*</span> : ''}</label>
+            {label && (<label contentEditable={editable} className={cn({'help': !!help})} title={help}
+                              htmlFor={id}>{label}{required ?
+                <span className="mandatory" contentEditable={false}>*</span> : ''}</label>)}
 
             {multiline && <textarea ref={inputRef} aria-required={required} aria-readonly={readOnly} readOnly={readOnly}
                                     placeholder={placeholder} id={id} name={name} value={value || ''} rows={8}

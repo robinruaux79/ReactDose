@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
-import {clamp, data_filter, data_paginate} from "./Utils.jsx";
+import {clamp, data_filter, data_paginate, data_sort} from "./Utils.jsx";
 
 import cn from 'classnames';
 
-import {faBars, faCaretDown, faCaretRight, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {faBars, faCaretDown, faCaretRight, faCaretUp, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ValueEditor} from "./LoopEditor.jsx";
 import {NumberField, TextField} from "./Field.jsx";
@@ -285,17 +285,22 @@ export const updateJsonAtPath = (json, path, value) => {
     return nf;
 };
 
-export const DataTable = ({datas, showHeader, showFooter, elementsPerPage, page, sort, filter}) => {
+export const DataTable = ({datas, showHeader, showSearch, showFooter, elementsPerPage, page, actions, filter}) => {
 
+    const [activeHeader, setActiveHeader] = useState('');
+    const [sortHeader, setSortHeader] = useState({});
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(page);
 
-    const d = data_filter(datas, filter, sort, search);
-    const [filteredDatas, setFilteredDatas] = useState(data_paginate(d, currentPage, elementsPerPage));
+    // we get all data without pagination
+    const d = data_filter(datas, filter, search);
+    const [filteredDatas, setFilteredDatas] = useState([]);
+
+    const paginationFieldRef = useRef();
 
     useEffect(() => {
-        setFilteredDatas(data_paginate(data_filter(datas, filter, sort, search.toLowerCase()), currentPage, elementsPerPage));
-    }, [currentPage, search]);
+        setFilteredDatas(data_paginate(data_sort(data_filter(datas, filter, search.toLowerCase()), activeHeader, sortHeader[activeHeader] ? 'DESC' : 'ASC'), currentPage, elementsPerPage));
+    }, [currentPage, elementsPerPage, search, sortHeader, filter]);
 
     // Get headers
     let concatH = [];
@@ -304,14 +309,25 @@ export const DataTable = ({datas, showHeader, showFooter, elementsPerPage, page,
     });
     concatH = [...new Set(concatH)];
 
+    const handleHeaderSort = (header) => {
+        sortHeader[header] = !sortHeader[header];
+        setActiveHeader(header);
+        setSortHeader(JSON.parse(JSON.stringify(sortHeader)));
+    };
+
     const datasHeaders = concatH.map(h => {
-        return <th key={'h_' + h} scope="col">{h}</th>;
+        return <th key={'h_' + h} scope="col">
+            {h}
+            <Hyperlink onClick={() => handleHeaderSort(h)}>
+                <FontAwesomeIcon icon={!sortHeader[h] ? faCaretDown : faCaretUp}/>
+            </Hyperlink>
+        </th>;
     });
 
     let datasBody = [];
     Object.values(filteredDatas).forEach((d, i) => {
         datasBody.push(<tr key={'b' + i}>{Object.keys(d).map(k => {
-            return <td key={i + '_' + k} headers={k}>{d[k]}</td>
+            return <td tabIndex={0} key={i + '_' + k} headers={k}>{d[k]}</td>
         })}</tr>);
     });
 
@@ -335,18 +351,27 @@ export const DataTable = ({datas, showHeader, showFooter, elementsPerPage, page,
     let pagination = [];
     const pages = Math.ceil(d.length / elementsPerPage);
     pagination.push(<><Button disabled={currentPage === 1} onClick={() => gotoPrevious()}>&lt;</Button></>);
-    pagination.push(<><NumberField onChange={gotoPage}
+    pagination.push(<><NumberField ref={paginationFieldRef} onChange={gotoPage}
                                    value={currentPage}/> / {pages}</>);
     pagination.push(<><Button disabled={currentPage === pages} onClick={gotoNext}>&gt;</Button></>);
 
-    return <table>
+    const onKeyDown = (e) => {
+        console.log(e);
+        if (e.key === 'Escape') {
+            paginationFieldRef.current.ref.focus();
+        }
+    };
+
+    return <table onKeyDown={onKeyDown}>
         <thead>
-        <tr>
-            <td colSpan={datasHeaders.length}>
-                <TextField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher..."/>
-            </td>
-        </tr>
-        {datasHeaders.length && (
+        {showSearch && (
+            <tr>
+                <td colSpan={datasHeaders.length}>
+                    <TextField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher..."/>
+                </td>
+            </tr>
+        )}
+        {showHeader && datasHeaders.length && (
             <tr>
                 {datasHeaders}
             </tr>
@@ -367,6 +392,7 @@ export const DataTable = ({datas, showHeader, showFooter, elementsPerPage, page,
             <tr>
                 <td colSpan={datasHeaders.length}>
                     <div className="pagination">{pagination}</div>
+                    <div className="actions-horizontal">{actions}</div>
                 </td>
             </tr>
             </tfoot>

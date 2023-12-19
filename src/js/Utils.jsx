@@ -36,7 +36,7 @@ export const data_paginate = (datas, page, elementsPerPage) => {
         return datas.slice((page - 1) * elementsPerPage, page * elementsPerPage);
     return datas;
 }
-export const data_filter = (datas, filter, sort, query) => {
+export const data_filter = (datas, filter, query) => {
     // Filter data
     let filteredDatas = datas;
     if (filter)
@@ -46,6 +46,8 @@ export const data_filter = (datas, filter, sort, query) => {
             let inc = false;
             let keys = Object.keys(f);
             for (let i = 0; i < keys.length; ++i) {
+                if (typeof (f[keys[i]]) === 'object')
+                    continue;
                 if ((f[keys[i]] + '').includes(query)) {
                     inc = true;
                     break;
@@ -54,10 +56,33 @@ export const data_filter = (datas, filter, sort, query) => {
             return inc;
         })
     }
-    if (sort)
-        filteredDatas = filteredDatas.sort(sort);
-
     return filteredDatas;
+}
+const sortHeaders = (a, b, columns, columnValues) => {
+    if (columns.length === 0) {
+        return a < b;
+    }
+    const [item, ...others] = columns;
+    const [column, orderBy] = item;
+    const valueA = columnValues ? columnValues(column, a[column]) : a[column];
+    const valueB = columnValues ? columnValues(column, b[column]) : b[column];
+
+    if (orderBy === 'ASC') {
+        if (valueA > valueB) return 1;
+        if (valueA < valueB) return -1;
+        if (others.length) return sortHeaders(a, b, others, columnValues);
+        return 0;
+    } else {
+        if (valueB > valueA) return 1;
+        if (valueB < valueA) return -1;
+        if (others.length) return sortHeaders(a, b, others, columnValues);
+        return 0;
+    }
+}
+
+export const data_sort = (datas, column, orderAsc) => {
+    const headerSortConf = [[column, orderAsc]];
+    return datas.sort((a, b) => sortHeaders(a, b, headerSortConf, null));
 }
 
 const recursiveMap = (children, fn) => {
