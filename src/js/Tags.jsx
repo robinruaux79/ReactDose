@@ -285,7 +285,17 @@ export const updateJsonAtPath = (json, path, value) => {
     return nf;
 };
 
-export const DataTable = ({datas, showHeader, showSearch, showFooter, elementsPerPage, page, actions, filter}) => {
+export const DataTable = ({
+                              datas,
+                              showHeader,
+                              showSearch,
+                              placeholder,
+                              showFooter,
+                              elementsPerPage,
+                              page,
+                              actions,
+                              filter
+                          }) => {
 
     const [activeHeader, setActiveHeader] = useState('');
     const [sortHeader, setSortHeader] = useState({});
@@ -327,7 +337,7 @@ export const DataTable = ({datas, showHeader, showSearch, showFooter, elementsPe
     let datasBody = [];
     Object.values(filteredDatas).forEach((d, i) => {
         datasBody.push(<tr key={'b' + i}>{Object.keys(d).map(k => {
-            return <td tabIndex={0} key={i + '_' + k} headers={k}>{d[k]}</td>
+            return <td tabIndex={0} key={i + '_' + k} headers={k}>{d[k] + ''}</td>
         })}</tr>);
     });
 
@@ -371,7 +381,7 @@ export const DataTable = ({datas, showHeader, showSearch, showFooter, elementsPe
                 </td>
             </tr>
         )}
-        {showHeader && datasHeaders.length && (
+        {showHeader && datasHeaders.length > 0 && (
             <tr>
                 {datasHeaders}
             </tr>
@@ -383,7 +393,7 @@ export const DataTable = ({datas, showHeader, showSearch, showFooter, elementsPe
         )}
         {datasBody.length === 0 && (
             <tr>
-                <td colSpan={datasHeaders.length}>Pas de résultats</td>
+                <td colSpan={datasHeaders.length}>{placeholder}</td>
             </tr>
         )}
         </tbody>
@@ -402,5 +412,6 @@ export const DataTable = ({datas, showHeader, showSearch, showFooter, elementsPe
 
 DataTable.defaultProps = {
     page: 1,
-    elementsPerPage: 20
+    elementsPerPage: 20,
+    placeholder: "Pas de résultats"
 };

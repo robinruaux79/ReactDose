@@ -2,11 +2,10 @@ import React from 'react';
 
 import {SearchBox} from './Widgets.jsx';
 
-import {Globalization, Translate} from './Globalization.jsx';
+import {Globalization} from './Globalization.jsx';
 import {DataEditor, DataTable, Title} from "./Tags.jsx";
 
 import './App.css';
-import {TextField} from "./Field.jsx";
 
 /**
  * ICI !
@@ -41,11 +40,9 @@ const App = () => {
                 "toto": [1, 2]
             }}
             />
-            <DataTable showHeader={false} showSearch={false} showFooter={false} page={1} elementsPerPage={10}
-                       datas={[{id: '12', name: <Translate><TextField/></Translate>},
-                           {id: '2', name: 'ok22'}, {id: '4', name: 'ok2'}, {id: '145', name: 'abc'},
-                           {id: '2', name: 'ok22'}, {id: '4', name: 'ok2'}, {id: '145', name: 'abc'}
-                       ]}/>
+            <DataTable placeholder={"Pas de données"} showHeader={true} showSearch={false} showFooter={false} page={1}
+                       elementsPerPage={10}
+                       datas={[{"test": true, "col": "val"}, {"test": 2}]}/>
         </Globalization>
     </>)
 }

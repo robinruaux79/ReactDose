@@ -39,8 +39,9 @@ export const data_paginate = (datas, page, elementsPerPage) => {
 export const data_filter = (datas, filter, query) => {
     // Filter data
     let filteredDatas = datas;
-    if (filter)
+    if (filter) {
         filteredDatas = filteredDatas.filter(filter);
+    }
     if (typeof (query) === 'string') {
         filteredDatas = filteredDatas.filter(f => {
             let inc = false;
@@ -64,8 +65,8 @@ const sortHeaders = (a, b, columns, columnValues) => {
     }
     const [item, ...others] = columns;
     const [column, orderBy] = item;
-    const valueA = columnValues ? columnValues(column, a[column]) : a[column];
-    const valueB = columnValues ? columnValues(column, b[column]) : b[column];
+    const valueA = columnValues ? columnValues(column, a[column]) : (a[column] ?? '');
+    const valueB = columnValues ? columnValues(column, b[column]) : (b[column] ?? '');
 
     if (orderBy === 'ASC') {
         if (valueA > valueB) return 1;
