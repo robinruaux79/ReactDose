@@ -236,3 +236,12 @@ table thead, table tfoot {
 .pagination .field input {
     max-width: 30px;
 }
+
+
+.json-editor .json-attribute {
+    display: flex;
+}
+
+.json-editor .json-attribute .lbl {
+    font-weight: bold;
+}

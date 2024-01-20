@@ -3,7 +3,7 @@ import React from 'react';
 import {SearchBox} from './Widgets.jsx';
 
 import {Globalization} from './Globalization.jsx';
-import {DataEditor, DataTable, Title} from "./Tags.jsx";
+import {DataTable, JsonEditor, Title} from "./Tags.jsx";
 
 import './App.css';
 
@@ -31,7 +31,7 @@ const App = () => {
                 if (v.onSelect)
                     v.onSelect(v);
             }}/>
-            <DataEditor datas={{
+            <JsonEditor datas={{
                 "test": "val1",
                 "test2": {
                     "test3": null,

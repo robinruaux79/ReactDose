@@ -3,9 +3,8 @@ import {clamp, data_filter, data_paginate, data_sort} from "./Utils.jsx";
 
 import cn from 'classnames';
 
-import {faBars, faCaretDown, faCaretRight, faCaretUp, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {faCaretDown, faCaretUp} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {ValueEditor} from "./LoopEditor.jsx";
 import {NumberField, TextField} from "./Field.jsx";
 
 export const Title = ({children, level, editable}) => {
@@ -152,6 +151,25 @@ export const Menu = ({id, children, ordered, breadcrumb, navigation, editable, o
         <ul {...otherProps} id={id} className={className} contentEditable={editable}>{children}</ul>);
 }
 
+export const JsonEditor = ({datas}) => {
+
+    const CreateAttr = ({datas}) => {
+        if (!datas) {
+            return 'null';
+        }
+        return Object.keys(datas).map((d) => {
+            return <div className="json-attribute">
+                <div className="lbl">{d}</div>
+                <span>&nbsp;:&nbsp;</span>
+                <div className="value">{typeof (datas[d]) === 'object' ?
+                    <CreateAttr datas={datas[d]}/> : datas[d]}</div>
+            </div>
+        })
+    };
+    return <div className="json-editor">
+        <CreateAttr datas={datas}/>
+    </div>
+};
 export const Page = ({children}) => {
     return <section class="page">{children}</section>;
 }
@@ -160,7 +178,7 @@ export const Item = ({children, key}) => {
     return <li key={key}>{children}</li>;
 }
 
-export const DataEditor = ({datas, onChange}) => {
+/* export const DataEditor = ({datas, onChange}) => {
 
     const DataProp = ({path, k, v, onChange}) => {
         let fieldRef = useRef();
@@ -267,7 +285,7 @@ export const DataEditor = ({datas, onChange}) => {
         updateJsonAtPath(datas, path, v);
     }
     } k={m} v={datas[m]} path={[]}/>)}</div>;
-};
+};*/
 
 export const updateJsonAtPath = (json, path, value) => {
     let i = 0;
@@ -310,7 +328,7 @@ export const DataTable = ({
 
     useEffect(() => {
         setFilteredDatas(data_paginate(data_sort(data_filter(datas, filter, search.toLowerCase()), activeHeader, sortHeader[activeHeader] ? 'DESC' : 'ASC'), currentPage, elementsPerPage));
-    }, [currentPage, elementsPerPage, search, sortHeader, filter]);
+    }, [currentPage, elementsPerPage, search, sortHeader, filter, activeHeader]);
 
     // Get headers
     let concatH = [];
@@ -321,8 +339,10 @@ export const DataTable = ({
 
     const handleHeaderSort = (header) => {
         sortHeader[header] = !sortHeader[header];
-        setActiveHeader(header);
-        setSortHeader(JSON.parse(JSON.stringify(sortHeader)));
+        if (sortHeader[header])
+            setActiveHeader(header);
+        else
+            setActiveHeader(null)
     };
 
     const datasHeaders = concatH.map(h => {

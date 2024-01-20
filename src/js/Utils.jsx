@@ -68,6 +68,10 @@ const sortHeaders = (a, b, columns, columnValues) => {
     const valueA = columnValues ? columnValues(column, a[column]) : (a[column] ?? '');
     const valueB = columnValues ? columnValues(column, b[column]) : (b[column] ?? '');
 
+    if (typeof (valueA) === 'string') {
+        return valueA.localeCompare(valueB);
+    }
+
     if (orderBy === 'ASC') {
         if (valueA > valueB) return 1;
         if (valueA < valueB) return -1;
